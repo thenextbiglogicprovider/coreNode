@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json.schemastore.org/eslintrc",
+    "env": {
+        "node": true,
+        "mocha": true,
+        "mongo": true,
+        "commonjs": true
+    },
+    "root": true,
+    "rules": {
+        "semi": "error",
+        "curly": "error",
+        "radix": "warn",
+        "eqeqeq": "error",
+        "indent": "error",
+        "no-var": "error",
+        "quotes": "error",
+        "no-eval": "error",
+        "no-alert": "warn",
+        "no-empty": "error",
+        "no-undef": "error",
+        "camelCase": "error",
+        "use-isNAN": "error",
+        "wrap-iife": "warn",
+        "complexity": "error",
+        "func-names": "error"
+    }
+}
