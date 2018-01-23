@@ -1,8 +1,11 @@
 {
     "compilerOptions": {
+        "baseUrl": "./",
        "module": "commonjs",
        "sourceMap": false,
-       "target":"es2015"
+       "target":"es2015",
+      "listEmittedFiles": true,
+      "listFiles": true
     },
     "exclude": [
         "node_modules"

@@ -2,7 +2,8 @@ import * as express from "express";
 import webpackConfig from "./config";
 import * as path from "path";
 import { Utils } from "../../src/config/utils";
-const engine = require("mustache-express");
+const engine = require("mustache-express"),
+      open = require("open");
 class appServer {
     /**
      *
@@ -36,8 +37,16 @@ class appServer {
     }
 
     private Start(): void {
-        this.app.listen(this.port, () => {
-            console.log('App Server listening on port:' + this.port);
+        this.app.listen(this.port, (err) => {
+            if(err)
+            {
+                console.log(err);
+            }
+            else{
+                console.log('App Server listening on port:' + this.port);
+                open('http://localhost:'+this.port);
+            }
+           
         });
     }
 }

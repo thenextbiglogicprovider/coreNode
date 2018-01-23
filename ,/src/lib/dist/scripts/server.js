@@ -4,7 +4,7 @@ const express = require("express");
 const config_1 = require("./config");
 const path = require("path");
 const utils_1 = require("../../src/config/utils");
-const engine = require("mustache-express"), open = require("open");
+const engine = require("mustache-express");
 class appServer {
     /**
      *
@@ -31,14 +31,8 @@ class appServer {
         this._app.use(config_1.default());
     }
     Start() {
-        this.app.listen(this.port, (err) => {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                console.log('App Server listening on port:' + this.port);
-                open('http://localhost:' + this.port);
-            }
+        this.app.listen(this.port, () => {
+            console.log('App Server listening on port:' + this.port);
         });
     }
 }
