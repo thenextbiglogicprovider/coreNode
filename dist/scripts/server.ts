@@ -40,10 +40,10 @@ class appServer {
         this.app.listen(this.port, (err) => {
             if(err)
             {
-                console.log(err);
+                console.log(err); /*eslint-disable-line-no-console */
             }
             else{
-                console.log('App Server listening on port:' + this.port);
+                console.log('App Server listening on port:' + this.port);/*eslint-disable-line-no-console */
                 open('http://localhost:'+this.port);
             }
            
