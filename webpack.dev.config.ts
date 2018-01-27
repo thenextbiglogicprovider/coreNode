@@ -1,36 +1,36 @@
 import * as path from "path";
 //import {HTMLPlugin} from "html-webpack-plugin";
 import {
-    Utils
+    Utils,
 } from "./src/config/utils";
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-export const config= {
-    devtool: 'inline-source-map',
+export const config = {
+    devtool: "inline-source-map",
     entry: [
-        path.resolve(__dirname, 'src/index')
+        path.resolve(__dirname, "src/index"),
     ],
-    target: 'web',
+    target: "web",
     output: {
-        path: path.resolve(__dirname, 'src'),
-        publicPath: Utils.Constants.APPPATH,
-        filename: '[name].bundle.js'
+        path: path.resolve(__dirname, "src"),
+        publicPath: Utils.Constants.APP_PATH,
+        filename: "[name].bundle.js",
     },
     plugins: [
         new HtmlWebpackPlugin({
             inject: true,
-            template: Utils.Constants.LAYOUTPATH.HEADER,
-        })
+            template: Utils.Constants.LAYOUT_PATH.HEADER,
+        }),
     ],
     module: {
         loaders: [{
             test: /\.js$/,
-            exclude: ['/node_modules/'],
-            loaders: ['babel-loader']
+            exclude: ["/node_modules/"],
+            loaders: ["babel-loader"],
         }, {
             test: /\.css$/,
-            loaders: ['style-loader', 'css-loader']
-        }]
-    }
-}
+            loaders: ["style-loader", "css-loader"],
+        }],
+    },
+};

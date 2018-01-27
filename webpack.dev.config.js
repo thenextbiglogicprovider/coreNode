@@ -5,30 +5,30 @@ const path = require("path");
 const utils_1 = require("./src/config/utils");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 exports.config = {
-    devtool: 'inline-source-map',
+    devtool: "inline-source-map",
     entry: [
-        path.resolve(__dirname, 'src/index')
+        path.resolve(__dirname, "src/index"),
     ],
-    target: 'web',
+    target: "web",
     output: {
-        path: path.resolve(__dirname, 'src'),
-        publicPath: utils_1.Utils.Constants.APPPATH,
-        filename: '[name].bundle.js'
+        path: path.resolve(__dirname, "src"),
+        publicPath: utils_1.Utils.Constants.APP_PATH,
+        filename: "[name].bundle.js",
     },
     plugins: [
         new HtmlWebpackPlugin({
             inject: true,
-            template: utils_1.Utils.Constants.LAYOUTPATH.HEADER,
-        })
+            template: utils_1.Utils.Constants.LAYOUT_PATH.HEADER,
+        }),
     ],
     module: {
         loaders: [{
                 test: /\.js$/,
-                exclude: ['/node_modules/'],
-                loaders: ['babel-loader']
+                exclude: ["/node_modules/"],
+                loaders: ["babel-loader"],
             }, {
                 test: /\.css$/,
-                loaders: ['style-loader', 'css-loader']
-            }]
-    }
+                loaders: ["style-loader", "css-loader"],
+            }],
+    },
 };

@@ -1,54 +1,60 @@
 import * as express from "express";
-import webpackConfig from "./config";
 import * as path from "path";
-import { Utils } from "../../src/config/utils";
-const engine = require("mustache-express"),
-      open = require("open");
-class appServer {
+import { Logger, Utils } from "../../src/config/utils";
+import { AppEnums } from "../../src/models/enums";
+import { LoggerModel } from "../../src/models/LoggerModel";
+import webpackConfig from "./config";
+
+const engine = require("mustache-express");
+const open = require("open");
+const appLogger = new Logger(new LoggerModel());
+class Server {
+    private PORT: number;
+    // tslint:disable-next-line:no-any
+    private APP: any;
     /**
      *
      */
     constructor(port: number) {
-        this._app = express();
-        this._port = port || 3000;
+        this.APP = express();
+        this.PORT = port || 3000;
         this.Start();
     }
 
-    private _port: number;
     public get port(): number {
-        return this._port = this._port || 3000;
+        return this.PORT = this.PORT || 3001;
     }
 
     public set port(v: number) {
-        this._port = v;
+        this.PORT = v;
     }
-
-    private _app: any;
+    // tslint:disable-next-line:no-any
     public get app(): any {
-        return this._app;
+        return this.APP;
     }
 
     private Configure(): void {
-        //this._app.engine('html',engine());
-        this._app.set('view engine',Utils.Constants.VIEWENGINE);
-        this._app.use(express.static(path.join(__dirname, Utils.Constants.VIEWPATH)));
-        this._app.set('views' ,express.static(path.join(__dirname, Utils.Constants.VIEWPATH)));
-        this._app.use(webpackConfig());
+        //this.APP.engine('html',engine());
+        this.APP.set("view engine", Utils.Constants.VIEW_ENGINE);
+        this.APP.use(express.static(path.join(__dirname, Utils.Constants.VIEW_PATH)));
+        this.APP.use(express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
+        this.APP.set("views" , express.static(path.join(__dirname, Utils.Constants.VIEW_PATH)));
+        this.APP.set("TestResults" , express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
+        this.APP.use(webpackConfig());
     }
 
     private Start(): void {
-        this.app.listen(this.port, (err) => {
-            if(err)
-            {
-                console.log(err); /*eslint-disable-line-no-console */
+        this.APP.listen(this.port, (err) => {
+            if (err) {
+                appLogger.Log(err, AppEnums.LogType.Error);
+            } else {
+                // tslint:disable-next-line:max-line-length
+                appLogger.Log("App Server listening on port:" + this.port, AppEnums.LogType.Message);
+                open("http://localhost:" + this.port);
             }
-            else{
-                console.log('App Server listening on port:' + this.port);/*eslint-disable-line-no-console */
-                open('http://localhost:'+this.port);
-            }
-           
+
         });
     }
 }
 
-export const AppServer = new appServer(3000);
+export const AppServer = new Server(3000);

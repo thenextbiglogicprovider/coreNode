@@ -1,0 +1,21 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {
+        "no-debugger": true
+    },
+    "rules": {
+        "no-angle-bracket-type-assertion": true,
+        "no-internal-module": true,
+        "no-any": true,
+        "no-arg": true,
+        "no-debugger": true,
+        "comment-format": true,
+        "one-variable-per": false,
+        "no-var-requires": false,
+        "object-literal-sort-keys": false
+    },
+    "rulesDirectory": []
+}

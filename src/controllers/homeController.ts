@@ -1,42 +1,49 @@
 import {
-    Router,
     Request,
-    Response
+    Response,
+    Router,
 } from "express";
 
 import * as path from "path";
 
 import { Utils } from "../config/utils";
+import * as baseControllerModule from "./baseController";
 
-class homeController {
+// tslint:disable-next-line:no-namespace
+export namespace Controllers {
+class HomeController extends baseControllerModule.Controllers.BaseController {
+
     /**
      *
      */
     constructor() {
-
+        super("Home");
     }
-
-    private _router: Router = Router();
-    public get router(): Router {
-        return this._router;
+    public GetViewPath(): string {
+        return this.VIEW_PATH;
     }
-
-    private _viewPath: string =path.join(__dirname, Utils.Constants.VIEWPATH);
-    private _currentView:string;
-
-    public get viewPath(): string {
-        return this._viewPath;
-    }
-
-    /**
-     * Get
-     */
-    public Get() {
-        return this._router.get('/', (req: Request, res: Response) => {
-            this._currentView=this._viewPath.replace('{0}','home').replace('{1}','index');
-            res.render(this._currentView,{locals:{ title:'Home'}});
+    public Get(route: string): Router {
+        return this.ROUTER.get("/", (req: Request, res: Response) => {
+            this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "index");
+            res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Home"}});
         });
     }
+    public About(route: string) {
+        return this.ROUTER.get("/about", (req: Request, res: Response) => {
+            //this.CURRENT_VIEW = this.VIEW_PATH.replace("{0}", "home").replace("{1}", "index");
+            //res.render(this.CURRENT_VIEW, {locals: { title: "Home"}});
+            res.send("Hello from home");
+        });
+    }
+    public Put(route: string): Router {
+        throw new Error("Method not implemented.");
+    }
+    public Post(route: string): Router {
+        throw new Error("Method not implemented.");
+    }
+    public Delete(route: string): Router {
+        throw new Error("Method not implemented.");
+    }
 }
-
-export const HomeController =new homeController();
+export const homeController = new HomeController();
+}

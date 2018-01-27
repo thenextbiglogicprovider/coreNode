@@ -1,9 +1,9 @@
 
-export interface IBaseModel{
- CreatedAt:Date;
- UpdatedAt:Date;
- Id:Number;
- SessionId:string;
- Active:boolean;
- Deleted:boolean;
+export interface IBaseModel {
+ CreatedAt: Date;
+ UpdatedAt: Date;
+ Id: number;
+ SessionId: string;
+ Active: boolean;
+ Deleted: boolean;
 }
