@@ -51,6 +51,7 @@
         "webpack-md5-hash": "0.0.6"
     },
     "dependencies": {
+        "body-parser": "^1.18.2",
         "bootstrap": "^4.0.0",
         "ejs": "^2.5.7",
         "eslint-loader": "^1.9.0",

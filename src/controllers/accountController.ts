@@ -18,14 +18,24 @@ export class AccountController extends ControllerModule.Controllers.BaseControll
         }
         public Get(route: string): Router {
            return this.ROUTER.get(route, (req, res) => {
-             res.send("Response from Account Controller");
+            this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "index");
+            res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
             });
         }
+        public Register(route: string): Router {
+            return this.ROUTER.get(route, (req, res) => {
+             this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
+             res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
+             });
+         }
         public Put(route: string): Router {
             throw new Error("Method not implemented.");
         }
         public Post(route: string): Router {
-            throw new Error("Method not implemented.");
+            return this.ROUTER.post(route, (req, res) => {
+                this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
+                res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
+                });
         }
         public Delete(route: string): Router {
             throw new Error("Method not implemented.");
