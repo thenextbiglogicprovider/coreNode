@@ -4,7 +4,9 @@ import {
     Router,
 } from "express";
 import * as path from "path";
-import { Utils } from "../config/utils";
+import { Logger, Utils } from "../config/utils";
+import { AppEnums } from "../models/enums";
+import { LoggerModel } from "../models/LoggerModel";
 import {
     IAppController,
 } from "./iAppController";
@@ -12,6 +14,7 @@ import {
 export namespace Controllers {
     export abstract class BaseController implements IAppController {
         private name: string;
+        private appLogger = new Logger(new LoggerModel());
         public get NAME(): string {
             return this.name;
         }
@@ -47,12 +50,19 @@ export namespace Controllers {
             this.viewPath = viewPath
             || path.join(__dirname, Utils.Constants.VIEW_PATH.replace("{0}", name.toLowerCase()));
             this.router = Router();
+            this.LogMessage("Base Controller initialized for :" + name );
             return this;
         }
+        public abstract ProcessRequest(): Router ;
         public abstract GetViewPath(): string;
         public abstract Get(route: string): Router ;
         public abstract Put(route: string): Router ;
         public abstract Post(route: string): Router ;
         public abstract Delete(route: string): Router ;
+
+        //#region private methods
+        protected LogMessage(message: string): void {
+            this.appLogger.Log(message, AppEnums.LogType.Message);
+        }
     }
 }

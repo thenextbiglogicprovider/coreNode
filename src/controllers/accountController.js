@@ -11,6 +11,12 @@ var Controllers;
         constructor() {
             super("Account");
         }
+        ProcessRequest() {
+            this.ROUTER.route("/account");
+            this.ROUTER.get("/login", this.Get("/login"));
+            this.ROUTER.get("/register", this.Register("/register"));
+            return this.ROUTER;
+        }
         GetViewPath() {
             return this.VIEW_PATH;
         }
@@ -30,7 +36,10 @@ var Controllers;
             throw new Error("Method not implemented.");
         }
         Post(route) {
-            throw new Error("Method not implemented.");
+            return this.ROUTER.post(route, (req, res) => {
+                this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
+                res.render(this.CURRENT_VIEW_PATH, { locals: { title: "Account" } });
+            });
         }
         Delete(route) {
             throw new Error("Method not implemented.");

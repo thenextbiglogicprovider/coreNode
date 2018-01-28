@@ -11,6 +11,12 @@ var Controllers;
         constructor() {
             super("Home");
         }
+        ProcessRequest() {
+            this.ROUTER.route("/");
+            this.ROUTER.get("/", this.Get("/"));
+            this.ROUTER.get("/about", this.About("/about"));
+            return this.ROUTER;
+        }
         GetViewPath() {
             return this.VIEW_PATH;
         }

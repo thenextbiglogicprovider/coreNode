@@ -10,6 +10,8 @@ export interface IAppController {
     CURRENT_VIEW_PATH: string;
     CURRENT_ROUTE: string;
     CURRENT_REQUEST: Request;
+    ProcessRequest(): Router ;
+
     /**
      * GetViewPath
      */

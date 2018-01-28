@@ -12,13 +12,19 @@ import * as baseControllerModule from "./baseController";
 // tslint:disable-next-line:no-namespace
 export namespace Controllers {
 class HomeController extends baseControllerModule.Controllers.BaseController {
-
     /**
      *
      */
     constructor() {
         super("Home");
     }
+    public ProcessRequest(): Router {
+        this.ROUTER.route("/");
+        this.ROUTER.get("/", this.Get("/"));
+        this.ROUTER.get("/about", this.About("/about"));
+        return this.ROUTER;
+    }
+
     public GetViewPath(): string {
         return this.VIEW_PATH;
     }

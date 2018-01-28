@@ -6,12 +6,17 @@ import * as ControllerModule from "./baseController";
 // tslint:disable-next-line:no-namespace
 export namespace Controllers {
 export class AccountController extends ControllerModule.Controllers.BaseController {
-
         /**
          *
          */
         constructor() {
             super("Account");
+        }
+        public ProcessRequest(): Router {
+            this.ROUTER.route("/account");
+            this.ROUTER.get("/login", this.Get("/login"));
+            this.ROUTER.get("/register", this.Register("/register"));
+            return this.ROUTER;
         }
         public GetViewPath(): string {
             return this.VIEW_PATH;
