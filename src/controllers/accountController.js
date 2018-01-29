@@ -15,6 +15,7 @@ var Controllers;
             this.ROUTER.route("/account");
             this.ROUTER.get("/login", this.Get("/login"));
             this.ROUTER.get("/register", this.Register("/register"));
+            this.ROUTER.post("/register", this.Post("/register"));
             return this.ROUTER;
         }
         GetViewPath() {
@@ -37,8 +38,10 @@ var Controllers;
         }
         Post(route) {
             return this.ROUTER.post(route, (req, res) => {
-                this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
-                res.render(this.CURRENT_VIEW_PATH, { locals: { title: "Account" } });
+                //this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
+                //res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
+                // tslint:disable-next-line:no-console
+                res.send(req.body);
             });
         }
         Delete(route) {

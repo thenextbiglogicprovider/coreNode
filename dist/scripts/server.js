@@ -6,17 +6,38 @@ const utils_1 = require("../../src/config/utils");
 const enums_1 = require("../../src/models/enums");
 const LoggerModel_1 = require("../../src/models/LoggerModel");
 const config_1 = require("./config");
+const AppSettings = require("./settings");
+const bodyParser = require("body-parser");
 const engine = require("mustache-express");
 const open = require("open");
 const appLogger = new utils_1.Logger(new LoggerModel_1.LoggerModel());
+const liveServer = require("live-server");
+const appSettings = AppSettings.default.AppSettings;
 class Server {
     /**
      *
      */
-    constructor(port) {
+    constructor(port, startLiveServer = false) {
         this.APP = express();
         this.PORT = port || 3000;
         this.Start();
+        if (startLiveServer) {
+            // liveServer.start(appSettings.params);
+            // this.LiveServer = liveServer;
+            this.liveServerUrl = "http://" + appSettings.params.host + ": " + appSettings.params.port;
+        }
+    }
+    get LiveServerUrl() {
+        return this.liveServerUrl;
+    }
+    set LiveServerUrl(v) {
+        this.liveServerUrl = "http://" + appSettings.params.host + ": " + appSettings.params.port;
+    }
+    get LiveServer() {
+        return this.LiveServer;
+    }
+    set LiveServer(v) {
+        this.LiveServer = liveServer;
     }
     get port() {
         return this.PORT = this.PORT || 3001;
@@ -50,4 +71,4 @@ class Server {
         });
     }
 }
-exports.AppServer = new Server(3000);
+exports.AppServer = new Server(3000, true);

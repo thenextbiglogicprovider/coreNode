@@ -1,6 +1,7 @@
 //import { Request, Response, Router } from "express";
 import { Router } from "express-serve-static-core";
 import * as path from "path";
+import * as util from "util";
 import { Utils } from "../config/utils";
 import * as ControllerModule from "./baseController";
 // tslint:disable-next-line:no-namespace
@@ -16,6 +17,7 @@ export class AccountController extends ControllerModule.Controllers.BaseControll
             this.ROUTER.route("/account");
             this.ROUTER.get("/login", this.Get("/login"));
             this.ROUTER.get("/register", this.Register("/register"));
+            this.ROUTER.post("/register", this.Post("/register"));
             return this.ROUTER;
         }
         public GetViewPath(): string {
@@ -38,8 +40,10 @@ export class AccountController extends ControllerModule.Controllers.BaseControll
         }
         public Post(route: string): Router {
             return this.ROUTER.post(route, (req, res) => {
-                this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
-                res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
+                //this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
+                //res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
+                // tslint:disable-next-line:no-console
+                res.send(req.body);
                 });
         }
         public Delete(route: string): Router {
