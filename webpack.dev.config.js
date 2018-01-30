@@ -7,20 +7,15 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 exports.config = {
     devtool: "inline-source-map",
     entry: [
-        path.resolve(__dirname, "src/index"),
+        path.join(__dirname, "src/views/home/index.ejs"),
     ],
     target: "web",
     output: {
-        path: path.resolve(__dirname, "src"),
+        path: path.join(__dirname, "src/views/home/index.ejs"),
         publicPath: utils_1.Utils.Constants.APP_PATH,
         filename: "[name].bundle.js",
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            inject: true,
-            template: utils_1.Utils.Constants.LAYOUT_PATH.HEADER,
-        }),
-    ],
+    plugins: [],
     module: {
         loaders: [{
                 test: /\.js$/,

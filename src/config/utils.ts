@@ -6,9 +6,9 @@ const Constants = {
   VIEW_ROOT: "../views/",
   VIEW_PATH: "../views/{0}/{1}.ejs",
   LAYOUT_PATH: {
-    HEADER: "../views/shared/_header.ejs",
-    FOOTER: "../views/shared/_footer.ejs",
-    LAYOUT: "../views/shared/_layout.ejs",
+    HEADER: "src/views/shared/_header.ejs",
+    FOOTER: "src/views/shared/_footer.ejs",
+    LAYOUT: "src/views/shared/_layout.ejs",
   },
   VIEW_ENGINE: "ejs",
   TEST_REPORT_PATH: "../../TestResults/mochawesome.html",

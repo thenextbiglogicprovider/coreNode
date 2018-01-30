@@ -8,9 +8,9 @@ const bodyParser = require("body-parser");
 const homeController = homeControllerModule.Controllers.homeController;
 const accountController = accountControllerModule.Controllers.accountController;
 //appServer.app.configure(() => {
-appServer.app.use(bodyParser.urlencoded({ extended: true }));
-appServer.app.use(bodyParser.json());
-//});
+// appServer.app.use(bodyParser.urlencoded({ extended: true }));
+// appServer.app.use(bodyParser.json());
+//   //});
 appServer.app.use(homeController.ProcessRequest());
 appServer.app.use("/account", accountController.ProcessRequest());
 // appServer.app.post("/account/register", (req, res) => {

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const path = require("path");
+const sessionManager_1 = require("../../src/config/sessionManager");
 const utils_1 = require("../../src/config/utils");
 const enums_1 = require("../../src/models/enums");
 const LoggerModel_1 = require("../../src/models/LoggerModel");
@@ -18,6 +19,7 @@ class Server {
      *
      */
     constructor(port, startLiveServer = false) {
+        this.sessionManager = sessionManager_1.sessionManager;
         this.APP = express();
         this.PORT = port || 3000;
         this.Start();
@@ -51,14 +53,21 @@ class Server {
     }
     Configure() {
         //this.APP.engine('html',engine());
+        this.APP.use(bodyParser.urlencoded({
+            extended: true,
+        }));
+        this.APP.use(bodyParser.json());
+        //});
         this.APP.set("view engine", utils_1.Utils.Constants.VIEW_ENGINE);
         this.APP.use(express.static(path.join(__dirname, utils_1.Utils.Constants.VIEW_PATH)));
         this.APP.use(express.static(path.join(__dirname, utils_1.Utils.Constants.TEST_REPORT_PATH)));
         this.APP.set("views", express.static(path.join(__dirname, utils_1.Utils.Constants.VIEW_PATH)));
         this.APP.set("TestResults", express.static(path.join(__dirname, utils_1.Utils.Constants.TEST_REPORT_PATH)));
         this.APP.use(config_1.default());
+        this.sessionManager.ConfigureSession(this.APP);
     }
     Start() {
+        this.Configure();
         this.APP.listen(this.port, (err) => {
             if (err) {
                 appLogger.Log(err, enums_1.AppEnums.LogType.Error);

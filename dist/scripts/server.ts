@@ -1,8 +1,16 @@
 import * as express from "express";
 import * as path from "path";
-import { Logger, Utils } from "../../src/config/utils";
-import { AppEnums } from "../../src/models/enums";
-import { LoggerModel } from "../../src/models/LoggerModel";
+import {sessionManager} from "../../src/config/sessionManager";
+import {
+    Logger,
+    Utils,
+} from "../../src/config/utils";
+import {
+    AppEnums,
+} from "../../src/models/enums";
+import {
+    LoggerModel,
+} from "../../src/models/LoggerModel";
 import webpackConfig from "./config";
 import * as AppSettings from "./settings";
 
@@ -13,6 +21,7 @@ const appLogger = new Logger(new LoggerModel());
 const liveServer = require("live-server");
 const appSettings = AppSettings.default.AppSettings;
 class Server {
+    private sessionManager = sessionManager;
     private PORT: number;
     // tslint:disable-next-line:no-any
     private APP: any;
@@ -58,15 +67,22 @@ class Server {
 
     private Configure(): void {
         //this.APP.engine('html',engine());
+        this.APP.use(bodyParser.urlencoded({
+            extended: true,
+        }));
+        this.APP.use(bodyParser.json());
+        //});
         this.APP.set("view engine", Utils.Constants.VIEW_ENGINE);
         this.APP.use(express.static(path.join(__dirname, Utils.Constants.VIEW_PATH)));
         this.APP.use(express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
-        this.APP.set("views" , express.static(path.join(__dirname, Utils.Constants.VIEW_PATH)));
-        this.APP.set("TestResults" , express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
+        this.APP.set("views", express.static(path.join(__dirname, Utils.Constants.VIEW_PATH)));
+        this.APP.set("TestResults", express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
         this.APP.use(webpackConfig());
+        this.sessionManager.ConfigureSession(this.APP);
     }
 
     private Start(): void {
+        this.Configure();
         this.APP.listen(this.port, (err) => {
             if (err) {
                 appLogger.Log(err, AppEnums.LogType.Error);
