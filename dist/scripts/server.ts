@@ -27,7 +27,7 @@ class Server {
     private APP: any;
 
     private liveServerUrl: string;
-
+    private appLogger = new Logger(new LoggerModel());
     /**
      *
      */
@@ -66,12 +66,14 @@ class Server {
     }
 
     private Configure(): void {
-        //this.APP.engine('html',engine());
+        this.APP.use((req, res, next) => {
+        this.LogMessage("Serving:" + req.url);
+        next();
+        });
         this.APP.use(bodyParser.urlencoded({
             extended: true,
         }));
         this.APP.use(bodyParser.json());
-        //});
         this.APP.set("view engine", Utils.Constants.VIEW_ENGINE);
         this.APP.use(express.static(path.join(__dirname, Utils.Constants.VIEW_PATH)));
         this.APP.use(express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
@@ -92,6 +94,10 @@ class Server {
                 open("http://localhost:" + this.port);
             }
         });
+    }
+
+    private LogMessage(message: string): void {
+        this.appLogger.Log(message, AppEnums.LogType.Message);
     }
 }
 

@@ -20,6 +20,7 @@ class Server {
      */
     constructor(port, startLiveServer = false) {
         this.sessionManager = sessionManager_1.sessionManager;
+        this.appLogger = new utils_1.Logger(new LoggerModel_1.LoggerModel());
         this.APP = express();
         this.PORT = port || 3000;
         this.Start();
@@ -52,12 +53,14 @@ class Server {
         return this.APP;
     }
     Configure() {
-        //this.APP.engine('html',engine());
+        this.APP.use((req, res, next) => {
+            this.LogMessage("Serving:" + req.url);
+            next();
+        });
         this.APP.use(bodyParser.urlencoded({
             extended: true,
         }));
         this.APP.use(bodyParser.json());
-        //});
         this.APP.set("view engine", utils_1.Utils.Constants.VIEW_ENGINE);
         this.APP.use(express.static(path.join(__dirname, utils_1.Utils.Constants.VIEW_PATH)));
         this.APP.use(express.static(path.join(__dirname, utils_1.Utils.Constants.TEST_REPORT_PATH)));
@@ -78,6 +81,9 @@ class Server {
                 open("http://localhost:" + this.port);
             }
         });
+    }
+    LogMessage(message) {
+        this.appLogger.Log(message, enums_1.AppEnums.LogType.Message);
     }
 }
 exports.AppServer = new Server(3000, true);

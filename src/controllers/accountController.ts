@@ -3,6 +3,7 @@ import { Router } from "express-serve-static-core";
 import * as path from "path";
 import * as util from "util";
 import { Utils } from "../config/utils";
+import { UserModule } from "../models/userModel";
 import * as ControllerModule from "./baseController";
 
 // tslint:disable-next-line:no-namespace
@@ -58,9 +59,20 @@ export class AccountController extends ControllerModule.Controllers.BaseControll
             return this.ROUTER.post(route, (req, res) => {
                 //this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
                 //res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
-                req.session.user = req.body;
+                const userModel = UserModule.userModel;
+                userModel.Active = true;
+                userModel.CreatedAt = new Date();
+                userModel.UpdatedAt = new Date();
+                userModel.Email = req.body.email;
+                userModel.FirstName = req.body.firstname;
+                userModel.LastName = req.body.lastname;
+                userModel.Password = req.body.password;
+                userModel.SessionId = req.session.id;
+                userModel.UserName = req.body.email;
+
+                req.session.user = userModel;
                 // tslint:disable-next-line:no-console
-                res.send(req.session);
+                res.send(userModel);
                 });
         }
         public Delete(route: string): Router {

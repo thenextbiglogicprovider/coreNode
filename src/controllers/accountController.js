@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const userModel_1 = require("../models/userModel");
 const ControllerModule = require("./baseController");
 // tslint:disable-next-line:no-namespace
 var Controllers;
@@ -55,9 +56,19 @@ var Controllers;
             return this.ROUTER.post(route, (req, res) => {
                 //this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
                 //res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Account"}});
-                req.session.user = req.body;
+                const userModel = userModel_1.UserModule.userModel;
+                userModel.Active = true;
+                userModel.CreatedAt = new Date();
+                userModel.UpdatedAt = new Date();
+                userModel.Email = req.body.email;
+                userModel.FirstName = req.body.firstname;
+                userModel.LastName = req.body.lastname;
+                userModel.Password = req.body.password;
+                userModel.SessionId = req.session.id;
+                userModel.UserName = req.body.email;
+                req.session.user = userModel;
                 // tslint:disable-next-line:no-console
-                res.send(req.session);
+                res.send(userModel);
             });
         }
         Delete(route) {

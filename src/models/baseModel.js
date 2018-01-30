@@ -1,21 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class BaseModel {
-    get Instance() {
-        return this.instance;
-    }
     /**
      *
      */
     constructor() {
-        if (!this.instance) {
-            this.instance = this;
-            this.instance.Active = true;
-            this.instance.CreatedAt = new Date();
-            this.instance.Deleted = false;
-            this.instance.UpdatedAt = new Date();
-        }
-        return this.Instance;
+        //if (!this) {
+        this.Active = true;
+        this.CreatedAt = new Date();
+        this.Deleted = false;
+        this.UpdatedAt = new Date();
+        //}
+        //return this;
     }
 }
 exports.BaseModel = BaseModel;
