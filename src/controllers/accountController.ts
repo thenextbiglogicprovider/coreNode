@@ -115,7 +115,7 @@ export namespace Controllers {
             userModel.FirstName = req.body.firstname;
             userModel.LastName = req.body.lastname;
             userModel.Password = req.body.password;
-            userModel.SessionId = req.session.id;
+            userModel.SessionId = new Date().toISOString();
             userModel.UserName = req.body.email;
             return userModel;
         }

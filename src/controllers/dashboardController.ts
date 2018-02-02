@@ -22,7 +22,8 @@ export namespace Controllers {
      public Get(route: string): Router {
          this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "index");
          return this.ROUTER.get(route, (req , res) => {
-        res.render(this.CURRENT_VIEW_PATH,  {locals: { title: this.NAME, message: "User Dashboard"}});
+        res.render(this.CURRENT_VIEW_PATH,  {locals: {
+             title: this.NAME, message: "User Dashboard", userData: req.session.userData}});
         });
      }
      public Put(route: string): Router {

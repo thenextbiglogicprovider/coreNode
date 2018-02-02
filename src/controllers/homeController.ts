@@ -31,7 +31,7 @@ class HomeController extends baseControllerModule.Controllers.BaseController {
     public Get(route: string): Router {
         return this.ROUTER.get("/", (req: Request, res: Response) => {
             this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "index");
-            res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Home"}});
+            res.render(this.CURRENT_VIEW_PATH, {locals: { title: "Home", userData: req.session.userData}});
         });
     }
     public About(route: string) {
