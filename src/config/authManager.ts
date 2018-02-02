@@ -48,7 +48,7 @@ export namespace Mannagers {
          * Logout
          */
         public Logout(req: Request) {
-              sessionManager.Reset(req);
+            sessionManager.Reset(req);
         }
 
         /**

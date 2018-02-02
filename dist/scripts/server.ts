@@ -69,7 +69,8 @@ class Server {
     private Configure(): void {
         this.APP.use((req, res, next) => {
         this.LogMessage(req.method + ":" + req.url);
-        //this.LogMessage("User Agent:" + util.inspect(req));
+        res.set("Cache-Control",
+        "no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0");
         next();
         });
         this.APP.use(bodyParser.urlencoded({
