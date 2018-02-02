@@ -26,15 +26,15 @@ class SessionManager {
     /**
      * Get
      */
-    public Get(req: Request, key: object) {
-        return req.session.key;
+    public Get(req: Request, key: string) {
+        return req.session[key];
     }
 
     /**
      * Set
      */
     public Set(req: Request, key: string, data: object) {
-        req.session.key = data;
+        req.session[key] = data;
     }
 
     /**
@@ -42,6 +42,13 @@ class SessionManager {
      */
     public Reset(req: Request) {
         req.session = null;
+    }
+
+    /**
+     * IsSessionValid
+     */
+    public IsSessionValid(req: Request): boolean {
+        return req.session && req.session.userData && req.session.userData.authenticated;
     }
 }
 

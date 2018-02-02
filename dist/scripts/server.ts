@@ -1,5 +1,6 @@
 import * as express from "express";
 import * as path from "path";
+import * as util from "util";
 import {sessionManager} from "../../src/config/sessionManager";
 import {
     Logger,
@@ -67,7 +68,8 @@ class Server {
 
     private Configure(): void {
         this.APP.use((req, res, next) => {
-        this.LogMessage("Serving:" + req.url);
+        this.LogMessage(req.method + ":" + req.url);
+        //this.LogMessage("User Agent:" + util.inspect(req));
         next();
         });
         this.APP.use(bodyParser.urlencoded({
@@ -81,6 +83,12 @@ class Server {
         this.APP.set("TestResults", express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
         this.APP.use(webpackConfig());
         this.sessionManager.ConfigureSession(this.APP);
+        this.APP.get((err, req, res, next) => {
+            this.appLogger.Log("Error:" + err.stack, AppEnums.LogType.Error);
+            next();
+        }, (req, res) => {
+            res.redirect("/error");
+        });
     }
 
     private Start(): void {
