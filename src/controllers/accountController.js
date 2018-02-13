@@ -1,31 +1,20 @@
-//import { Request, Response, Router } from "express";
-import {
-    Router,
-} from "express-serve-static-core";
-import * as path from "path";
-import * as util from "util";
-import * as authManagerModule from "../config/authManager";
-import {
-    Utils,
-} from "../config/utils";
-import {
-    UserModule,
-} from "../models/userModel";
-import * as ControllerModule from "./baseController";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const userModel_1 = require("../models/userModel");
+const ControllerModule = require("./baseController");
 // tslint:disable-next-line:no-namespace
-export namespace Controllers {
-    export class AccountController extends ControllerModule.Controllers.BaseController {
-        private message = "Provide credentials for login";
-        private authManager: authManagerModule.Mannagers.AuthManager;
+var Controllers;
+(function (Controllers) {
+    class AccountController extends ControllerModule.Controllers.BaseController {
         /**
          *
          */
-        constructor(manager: authManagerModule.Mannagers.AuthManager) {
+        constructor(manager) {
             super("Account");
+            this.message = "Provide credentials for login";
             this.authManager = manager;
         }
-
-        public ProcessRequest(): Router {
+        ProcessRequest() {
             this.ROUTER.route("/account");
             this.ROUTER.get("/login", this.Get("/login"));
             this.ROUTER.get("/logout", this.Logout("/logout"));
@@ -34,34 +23,33 @@ export namespace Controllers {
             this.ROUTER.post("/login", this.Put("/login"));
             return this.ROUTER;
         }
-        public GetViewPath(): string {
+        GetViewPath() {
             return this.VIEW_PATH;
         }
-        public Get(route: string): Router {
+        Get(route) {
             return this.ROUTER.get(route, (req, res) => {
                 this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "index");
                 if (this.authManager.IsAuthorizationvalid(req)) {
                     res.redirect("/dashboard/");
-                } else {
+                }
+                else {
                     // res.render(this.CURRENT_VIEW_PATH, {
                     //     locals: {
                     //         title: this.NAME,
                     //         message: this.message,
                     //     },
                     // });
-
                     res.redirect("../api/authenticate/authorize");
                 }
             });
         }
-        public Logout(route: string): Router {
+        Logout(route) {
             return this.ROUTER.get(route, (req, res) => {
                 //this.authManager.Logout(req);
                 res.redirect("../api/authenticate/logout");
             });
         }
-
-        public Register(route: string): Router {
+        Register(route) {
             return this.ROUTER.get(route, (req, res) => {
                 this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "register");
                 res.render(this.CURRENT_VIEW_PATH, {
@@ -78,38 +66,38 @@ export namespace Controllers {
          * @returns {Router}
          * @memberof AccountController
          */
-        public Put(route: string): Router {
+        Put(route) {
             return this.ROUTER.post(route, (req, res) => {
                 const userModel = this.GetUserModel(req);
-
                 if (this.authManager.Login(req, userModel)) {
                     res.redirect("/dashboard/");
-                } else {
+                }
+                else {
                     res.redirect("/login");
                 }
             });
         }
-        public Post(route: string): Router {
+        Post(route) {
             return this.ROUTER.post(route, (req, res) => {
                 try {
                     const userModel = this.GetUserModel(req);
-
                     if (this.authManager.Login(req, userModel)) {
                         res.redirect("/dashboard/");
-                    } else {
+                    }
+                    else {
                         res.redirect("/login");
                     }
-                } catch {
+                }
+                catch (_a) {
                     this.message = "Login Failed.";
                 }
             });
         }
-
-        public Delete(route: string): Router {
+        Delete(route) {
             throw new Error("Method not implemented.");
         }
-        private GetUserModel(req) {
-            const userModel = UserModule.userModel;
+        GetUserModel(req) {
+            const userModel = userModel_1.UserModule.userModel;
             userModel.Active = true;
             userModel.CreatedAt = new Date();
             userModel.UpdatedAt = new Date();
@@ -122,5 +110,6 @@ export namespace Controllers {
             return userModel;
         }
     }
+    Controllers.AccountController = AccountController;
     //export const accountController = new AccountController();
-}
+})(Controllers = exports.Controllers || (exports.Controllers = {}));

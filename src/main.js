@@ -1,15 +1,12 @@
-import * as fs from "fs";
-import * as path from "path";
-import * as AppServer from "../dist/scripts/server";
-import {
-    Utils,
-} from "../src/config/utils";
-import * as authManagerModule from "./config/authManager";
-import * as accountControllerModule from "./controllers/accountController";
-import * as authenticationApiControllerModule from "./controllers/authenticationApiController";
-import * as dashboardControllerModule from "./controllers/dashboardController";
-import * as errorControllerModule from "./controllers/errorController";
-import * as homeControllerModule from "./controllers/homeController";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const AppServer = require("../dist/scripts/server");
+const authManagerModule = require("./config/authManager");
+const accountControllerModule = require("./controllers/accountController");
+const authenticationApiControllerModule = require("./controllers/authenticationApiController");
+const dashboardControllerModule = require("./controllers/dashboardController");
+const errorControllerModule = require("./controllers/errorController");
+const homeControllerModule = require("./controllers/homeController");
 const authPassport = require("passport");
 const appServer = new AppServer.Server(3000, false, authPassport);
 const bodyParser = require("body-parser");

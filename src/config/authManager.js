@@ -1,11 +1,11 @@
-import { Request } from "express";
-import * as userModule from "../models/userModel";
-import * as sessionManagerModules from "./sessionManager";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const sessionManagerModules = require("./sessionManager");
 // tslint:disable-next-line:no-namespace
-export namespace Mannagers {
+var Mannagers;
+(function (Mannagers) {
     const sessionManager = sessionManagerModules.sessionManager;
-    export class AuthManager  {
+    class AuthManager {
         /**
          *
          */
@@ -15,28 +15,30 @@ export namespace Mannagers {
         /**
          * AuthenticateUser
          */
-        public AuthenticateUser(next, req, res) {
+        AuthenticateUser(next, req, res) {
             if (!this.IsAuthorizationvalid(req)) {
                 res.redirect("/account/login");
-            } else {
+            }
+            else {
                 next();
             }
         }
         /**
          * Login
          */
-        public Login(req, user: userModule.UserModule.UserModel): boolean {
+        Login(req, user) {
             let status = false;
             if (!user) {
                 throw new Error("Login Failed. Null User data received");
-            } else {
+            }
+            else {
                 user.Password = null;
                 user.SessionId = user.CreatedAt.toString();
                 user.LastLogin = new Date();
                 sessionManager.Set(req, "user", user);
                 req.session.userData = {
                     authenticated: true,
-                    name : user.FirstName + " " + user.LastName,
+                    name: user.FirstName + " " + user.LastName,
                     username: user.UserName,
                     toke: user.SessionId,
                     user_id: user.Id,
@@ -45,19 +47,18 @@ export namespace Mannagers {
             }
             return status;
         }
-
         /**
          * Logout
          */
-        public Logout(req: Request) {
+        Logout(req) {
             sessionManager.Reset(req);
         }
-
         /**
          * IsAuthorizationvalid
          */
-        public IsAuthorizationvalid(req: Request) {
+        IsAuthorizationvalid(req) {
             return sessionManager.IsSessionValid(req);
         }
     }
-}
+    Mannagers.AuthManager = AuthManager;
+})(Mannagers = exports.Mannagers || (exports.Mannagers = {}));

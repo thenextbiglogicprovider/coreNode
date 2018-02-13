@@ -12,6 +12,8 @@ const Constants = {
   },
   VIEW_ENGINE: "ejs",
   TEST_REPORT_PATH: "../../TestResults/mochawesome.html",
+   IDENTITY_SERVER_URL : "http://localhost:5000",
+   TOKEN_ISSUER_URL : "http://localhost:5000",
 };
 
 const log = console.log;
