@@ -31,14 +31,14 @@ export namespace Mannagers {
                 throw new Error("Login Failed. Null User data received");
             } else {
                 user.Password = null;
-                user.SessionId = user.CreatedAt.toString();
+                //user.SessionId = user.CreatedAt.toString();
                 user.LastLogin = new Date();
                 sessionManager.Set(req, "user", user);
                 req.session.userData = {
                     authenticated: true,
                     name : user.FirstName + " " + user.LastName,
                     username: user.UserName,
-                    toke: user.SessionId,
+                    token: user.SessionId,
                     user_id: user.Id,
                 };
                 status = true;

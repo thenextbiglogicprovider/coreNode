@@ -17,17 +17,17 @@ const session = require("express-session");
 const RedisStore = require("connect-redis")(session);
 
 module.exports.configure = function configure(app, passport) {
-    app.use(session({
-            secret: "bleargh",
-            resave: false,
-            saveUninitialized: false,
-            secure: true,
-            store: new RedisStore({
-                host: "127.0.0.1",
-                port: 6379,
-            }),
-        },
-    ));
+    // app.use(session({
+    //         secret: "bleargh",
+    //         resave: false,
+    //         saveUninitialized: false,
+    //         secure: true,
+    //         store: new RedisStore({
+    //             host: "127.0.0.1",
+    //             port: 6379,
+    //         }),
+    //     },
+    // ));
 
     app.get("/api/authenticate/authorize", passport.authenticate("openidconnect", {}));
     app.post("/api/authenticate/authorize", passport.authenticate("openidconnect", {}),

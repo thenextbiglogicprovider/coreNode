@@ -3,8 +3,11 @@ import {
 } from "express-serve-static-core";
 import * as path from "path";
 import * as util from "util";
+import { authConfig } from "../config/auth.config";
 import * as authManagerModule from "../config/authManager";
-import { clientConfig } from "../config/clientConfig";
+import {
+    clientConfig,
+} from "../config/clientConfig";
 import {
     Utils,
 } from "../config/utils";
@@ -54,10 +57,8 @@ export namespace ApiControllers {
         }
         public Put(route: string): Router {
             return this.ROUTER.get(route, this.passport.authenticate("openidconnect", {}), (req, res) => {
-                 // tslint:disable-next-line:no-console
-                 console.log(req.user);
-                 const userModel = this.GetUserModel(req.user);
-                 if (this.authManager.Login(req, userModel)) {
+                const userModel = this.GetUserModel(req.user);
+                if (this.authManager.Login(req, userModel)) {
                     res.redirect("/dashboard/");
                 } else {
                     res.redirect("/logout");
@@ -69,11 +70,17 @@ export namespace ApiControllers {
                 // tslint:disable-next-line:no-console
                 console.log(req.body);
                 if (req.body && (!req.body.returnurl || !req.body.client_id || !req.body.callback_url)) {
-                    res.json({status: 404, message: "404- bad request", success: false});
+                    res.json({
+                        status: 404,
+                        message: "404- bad request",
+                        success: false,
+                    });
                 } else {
-                 res.json({status: 301,
-                     returnUrl: req.protocol + "://" + req.get("host") + "/account/login",
-                     success: true});
+                    res.json({
+                        status: 301,
+                        returnUrl: req.protocol + "://" + req.get("host") + "/account/login",
+                        success: true,
+                    });
                 }
             });
         }
@@ -82,20 +89,18 @@ export namespace ApiControllers {
         }
         public Logout(route: string): Router {
             return this.ROUTER.get(route, (req, res) => {
-                // tslint:disable-next-line:no-console
-        console.log(req.user);
-        // tslint:disable-next-line:no-console
-        console.log(req.session.userData);
-        let token = req.user ;
-        if (token) {
-        token = token.token;
-        }
-        req.logout();
-        this.authManager.Logout(req);
-        const uri = appConstants.IDENTITY_SERVER_URL +
-         // tslint:disable-next-line:max-line-length
-         "/connect/endsession?id_token=token&post_logout_redirect_uri=https://localhost:3000";
-        res.redirect(uri);
+                 // tslint:disable-next-line:no-console
+                 console.log(req.session.userData);
+                 let token = req.session.userData;
+                 if (token) {
+                    token = token.token;
+                }
+                 req.logout();
+                 this.authManager.Logout(req);
+                 const uri = appConstants.IDENTITY_SERVER_URL +
+                    // tslint:disable-next-line:max-line-length
+                    "/connect/endsession?id_token=token&id_token_hint=" + token + "&clientId=" + authConfig.authconfig.clientID + "&post_logout_redirect_uri=http://localhost:3000";
+                 res.redirect(uri);
             });
         }
         private GetUserModel(req) {
