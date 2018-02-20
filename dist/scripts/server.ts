@@ -3,7 +3,6 @@ import { passport } from "passport";
 import * as path from "path";
 import * as util from "util";
 import * as authConfig from "../../src/config/auth.config";
-import {sessionManager} from "../../src/config/sessionManager";
 import {
     Logger,
     Utils,
@@ -24,25 +23,26 @@ const open = require("open");
 const appLogger = new Logger(new LoggerModel());
 const liveServer = require("live-server");
 const appSettings = AppSettings.default.AppSettings;
-
+const session = require("express-session");
 const Strategy = require("passport-openidconnect").Strategy;
 const authConfiguration = authConfig.authConfig;
 const cookieParser = require("cookie-parser");
 export class Server {
     private authPassport;
-    private sessionManager = sessionManager;
     private PORT: number;
     // tslint:disable-next-line:no-any
     private APP: any;
 
     private liveServerUrl: string;
     private appLogger = new Logger(new LoggerModel());
+    private sessionManager;
     /**
      *
      */
-    constructor(port: number, authPassport, startLiveServer: boolean = false) {
+    constructor(port: number, authPassport, startLiveServer: boolean = false, sessionManager) {
         this.APP = express();
         this.PORT = port || 3000;
+        this.sessionManager = sessionManager;
         this.authPassport = require("passport");
         this.Start();
         if (startLiveServer) {
@@ -90,18 +90,19 @@ export class Server {
         this.APP.use(cors());
         this.APP.use(bodyParser.json());
         this.APP.use(this.authPassport.initialize());
-        this.APP.use(this.authPassport.session());
+        this.sessionManager.ConfigureSession(this.APP, session);
+        //this.APP.use(this.sessionManager.Session);
         // tslint:disable-next-line:max-line-length
         this.authPassport.use(new Strategy(authConfiguration.authconfig, (iss, sub, profile, jwtClaims, accessToken, refreshToken, params, verified) => {
-            //this.app.session.user = {};
             verified(null, Object.assign({}, profile, {token: accessToken}));
         }));
         this.authPassport.serializeUser((user, done) => {
             // tslint:disable-next-line:no-console
-            console.log("User Info:" + user);
-            done(null, {id: user.id, name: user.displayName, token: user.token});
+            console.log("Serialzed user" + util.inspect(this.authPassport.session));
+            // tslint:disable-next-line:max-line-length
+            done(null, {id: user.id, name: user.displayName, token: user.token });
         });
-        appLogger.Log("Startegy:" + require("passport-openidconnect").Strategy, AppEnums.LogType.Message);
+        //appLogger.Log("Startegy:" + require("passport-openidconnect").Strategy, AppEnums.LogType.Message);
         this.authPassport.deserializeUser((user, done) => {
             done(null, user);
         });
@@ -111,7 +112,6 @@ export class Server {
         this.APP.set("views", express.static(path.join(__dirname, Utils.Constants.VIEW_PATH)));
         this.APP.set("TestResults", express.static(path.join(__dirname, Utils.Constants.TEST_REPORT_PATH)));
         this.APP.use(webpackConfig());
-        this.sessionManager.ConfigureSession(this.APP);
         this.APP.get((err, req, res, next) => {
             this.appLogger.Log("Error:" + err.stack, AppEnums.LogType.Error);
             next();

@@ -1,10 +1,13 @@
-import { Request } from "express";
+import {
+    Request,
+} from "express";
 
+import * as util from "util";
 //import * as session from "client-sessions";
-const session = require("cookie-session");
-class SessionManager {
+///const session = require("express-session");
+export class SessionManager {
 
-    private session = session;
+    private session;
     public get Session(): object {
         return this.session;
     }
@@ -13,14 +16,24 @@ class SessionManager {
      * ConfigureSession
      */
     // tslint:disable-next-line:no-any
-    public ConfigureSession(app: any) {
-        app.use(this.session({
+    public ConfigureSession(app: any, appSession) {
+        // tslint:disable-next-line:no-console
+        console.log("New Session Configured");
+        app.use(appSession({
             name: "Session_Cookie",
             secret: "abc*try",
-            maxAge: 30 * 60 * 1000,
-            activeDuration: 5 * 60 * 1000,
-            httpOnly: true,
+            resave: true,
+            saveUninitialized: true,
         }));
+        this.session = appSession;
+        //app.use(appSession);
+    }
+
+    /**
+     * Save
+     */
+    public Save(req: Request) {
+        req.session.save();
     }
 
     /**
@@ -35,13 +48,14 @@ class SessionManager {
      */
     public Set(req: Request, key: string, data: object) {
         req.session[key] = data;
+        req.session.save();
     }
 
     /**
      * Reset
      */
     public Reset(req: Request) {
-        req.session = null;
+        req.session.destroy();
     }
 
     /**
@@ -52,4 +66,4 @@ class SessionManager {
     }
 }
 
-export const sessionManager = new SessionManager();
+//export const sessionManager = new SessionManager();

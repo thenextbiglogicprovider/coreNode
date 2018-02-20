@@ -4,7 +4,6 @@ import {
 } from "express-serve-static-core";
 import * as path from "path";
 import * as util from "util";
-import * as authManagerModule from "../config/authManager";
 import {
     Utils,
 } from "../config/utils";
@@ -16,11 +15,11 @@ import * as ControllerModule from "./baseController";
 export namespace Controllers {
     export class AccountController extends ControllerModule.Controllers.BaseController {
         private message = "Provide credentials for login";
-        private authManager: authManagerModule.Mannagers.AuthManager;
+        private authManager;
         /**
          *
          */
-        constructor(manager: authManagerModule.Mannagers.AuthManager) {
+        constructor(manager) {
             super("Account");
             this.authManager = manager;
         }
@@ -43,13 +42,6 @@ export namespace Controllers {
                 if (this.authManager.IsAuthorizationvalid(req)) {
                     res.redirect("/dashboard/");
                 } else {
-                    // res.render(this.CURRENT_VIEW_PATH, {
-                    //     locals: {
-                    //         title: this.NAME,
-                    //         message: this.message,
-                    //     },
-                    // });
-
                     res.redirect("../api/authenticate/authorize");
                 }
             });
