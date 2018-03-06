@@ -39,36 +39,120 @@ export namespace ApiControllers {
             this.ROUTER.route("/api/authenticate");
             this.ROUTER.post("/", this.Post("/"));
             this.ROUTER.post("/login", this.Post("/login"));
-            this.ROUTER.get("/logout", this.Logout("/logout");
+            this.ROUTER.get("/logout", this.Logout("/logout"));
             this.ROUTER.get("/callback", this.Put("/callback"));
+            this.ROUTER.post("/token", this.Put("/token"));
             return this.ROUTER;
-        }
-        public GetViewPath(): string {
-            throw new Error("Method not implemented.");
-        }
-        public Get(route: string): Router {
-            return this.ROUTER.post(route, (req, res) => {
-                const userModel = this.GetUserModel(req);
-                // tslint:disable-next-line:no-console
-                console.log(req.body);
-                if (this.authManager.Login(req, userModel)) {
-                    res.redirect("/dashboard/");
-                } else {
-                    res.redirect("/login");
-                }
-            });
-        }
-        public Put(route: string): Router {
-            return this.ROUTER.get(route, this.passport.authenticate("openidconnect",
-             { } ), (req, res) => {
-                const userModel = this.GetUserModel(req.user);
-                const appSession = req.session;
-                // tslint:disable-next-line:no-console
-                console.log("[PUT]=>app session- currentClient:" +
-                    util.inspect(currentClient));
-                if (this.authManager.Login(req, userModel)) {
-                    //const currentClient = this.authManager.GetCurrentClient(req);
-                    if (currentClient) {
+            }
+            public GetViewPath(): string {
+                throw new Error("Method not implemented.");
+            }
+            public Get(route: string): Router {
+                return this.ROUTER.post(route, (req, res) => {
+                    const userModel = this.GetUserModel(req);
+                    // tslint:disable-next-line:no-console
+                    console.log(req.body);
+                    if (this.authManager.Login(req, userModel)) {
+                        res.redirect("/dashboard/");
+                    } else {
+                        res.redirect("/login");
+                    }
+                });
+            }
+            public Put(route: string): Router {
+                return this.ROUTER.get(route, this.passport.authenticate("openidconnect", {}), (req, res) => {
+                    const userModel = this.GetUserModel(req.user);
+                    const appSession = req.session;
+                    // tslint:disable-next-line:no-console
+                    console.log("[PUT]=>app session- currentClient:" +
+                        util.inspect(currentClient));
+                    if (this.authManager.Login(req, userModel)) {
+                        //const currentClient = this.authManager.GetCurrentClient(req);
+                        if (currentClient.CallbackUrl || currentClient.ReturnUrl) {
+                            if (currentClient.CallbackUrl) {
+                                res.redirect(301, currentClient.CallbackUrl +
+                                    "?success=true&token=" + appSession.userData.token +
+                                    "&username=" + appSession.userData.name);
+                            } else {
+                                res.redirect(301, currentClient.ReturnUrl +
+                                    "?success=true&token=" + appSession.userData.token +
+                                    "&username=" + appSession.userData.name);
+                            }
+                        } else {
+                            res.redirect("/dashboard/");
+                        }
+                    } else {
+                        res.redirect("../account/logout");
+                    }
+                });
+            }
+            public Post(route: string): Router {
+                return this.ROUTER.post(route, (req, res) => {
+                    this.authManager.SetCurrentClient(req);
+                    const appSession = req.session;
+                    currentClient.ReturnUrl = req.body.returnurl;
+                    currentClient.ClientId = req.body.client_id;
+                    currentClient.CallbackUrl = req.body.callback_url;
+                    // tslint:disable-next-line:no-console
+                    console.log("[POST]=>app session:" + util.inspect(currentClient));
+                    if (req.body && (!req.body.returnurl || !req.body.client_id || !req.body.callback_url)) {
+                        res.json({
+                            status: 404,
+                            message: "404- bad request",
+                            success: false,
+                        });
+                    } else {
+                        if (!req.body.token && !(appSession.userData || appSession.userData.token)) {
+                            res.json({
+                                status: 301,
+                                returnUrl: req.protocol + "://" + req.get("host") + "/account/login",
+                                success: true,
+                            });
+                        } else {
+                            //const currentClient = appSession.currentClient;
+                            if (currentClient.CallbackUrl) {
+                                res.redirect(301, currentClient.CallbackUrl +
+                                    "?success=true&token=" + appSession.userData.token +
+                                    "&username=" + appSession.userData.name);
+                            } else {
+                                res.redirect(301, currentClient.ReturnUrl +
+                                    "?success=true&token=" + appSession.userData.token +
+                                    "&username=" + appSession.userData.name);
+                            }
+                        }
+                    }
+                });
+            }
+            public Delete(route: string): Router {
+                throw new Error("Method not implemented.");
+            }
+            public Logout(route: string): Router {
+                return this.ROUTER.get(route, (req, res) => {
+                    let token = req.session.userData;
+                    if (token) {
+                        token = token.token;
+                    }
+                    req.logout();
+                    this.authManager.Logout(req);
+                    //&id_token_hint=" + token + "&cliesntId=" + authConfig.authconfig.clientID + "
+                    const uri = appConstants.IDENTITY_SERVER_URL +
+                        // tslint:disable-next-line:max-line-length
+                        "/connect/endsession?id_token=token&post_logout_redirect_uri=http://localhost:3000";
+                    res.redirect(uri);
+                });
+            }
+            /**
+             * ValidateToken
+             */
+            public ValidateToken(route: string) {
+                return this.ROUTER.get(route, (req, res) => {
+                    currentClient.ReturnUrl = req.body.returnurl;
+                    currentClient.ClientId = req.body.client_id;
+                    currentClient.CallbackUrl = req.body.callback_url;
+                    currentClient.Token = req.body.token;
+                    const appSession = req.session;
+                    if (appSession && appSession.userData) {
+                      if (appSession.userData.token === currentClient.Token) {
                         if (currentClient.CallbackUrl) {
                             res.redirect(301, currentClient.CallbackUrl +
                                 "?success=true&token=" + appSession.userData.token +
@@ -78,82 +162,33 @@ export namespace ApiControllers {
                                 "?success=true&token=" + appSession.userData.token +
                                 "&username=" + appSession.userData.name);
                         }
-                    } else {
-                        res.redirect("/dashboard/");
-                    }
-                } else {
-                    res.redirect("../account/logout");
-                }
-            });
-        }
-        public Post(route: string): Router {
-            return this.ROUTER.post(route, (req, res) => {
-                this.authManager.SetCurrentClient(req);
-                const appSession = req.session;
-                currentClient.ReturnUrl = req.body.returnurl;
-                currentClient.ClientId = req.body.client_id;
-                currentClient.CallbackUrl = req.body.callback_url;
-                // tslint:disable-next-line:no-console
-                console.log("[POST]=>app session:" + util.inspect(currentClient));
-                if (req.body && (!req.body.returnurl || !req.body.client_id || !req.body.callback_url)) {
-                    res.json({
-                        status: 404,
-                        message: "404- bad request",
-                        success: false,
-                    });
-                } else {
-                    if (!req.body.token) {
-                        res.json({
-                            status: 301,
-                            returnUrl: req.protocol + "://" + req.get("host") + "/account/login",
-                            success: true,
-                        });
-                    } else {
-                        //const currentClient = appSession.currentClient;
+                      } else {
                         if (currentClient.CallbackUrl) {
-                            res.redirect(301, "http://localhost:4200/authorize" +
+                            res.redirect(401, currentClient.CallbackUrl +
                                 "?success=true&token=" + appSession.userData.token +
                                 "&username=" + appSession.userData.name);
                         } else {
-                            res.redirect(301, "http://localhost:4200/authorize" +
+                            res.redirect(401, currentClient.ReturnUrl +
                                 "?success=true&token=" + appSession.userData.token +
                                 "&username=" + appSession.userData.name);
                         }
+                      }
                     }
-                }
-            });
-        }
-        public Delete(route: string): Router {
-            throw new Error("Method not implemented.");
-        }
-        public Logout(route: string): Router {
-            return this.ROUTER.get(route, (req, res) => {
-                let token = req.session.userData;
-                if (token) {
-                    token = token.token;
-                }
-                req.logout();
-                this.authManager.Logout(req);
-                //&id_token_hint=" + token + "&clientId=" + authConfig.authconfig.clientID + "
-                const uri = appConstants.IDENTITY_SERVER_URL +
-                    // tslint:disable-next-line:max-line-length
-                    "/connect/endsession?id_token=token&post_logout_redirect_uri=http://localhost:3000";
-                res.redirect(uri);
-            });
-        }
-        private GetUserModel(req) {
-            const userModel = UserModule.userModel;
-            userModel.Active = true;
-            userModel.CreatedAt = new Date();
-            userModel.UpdatedAt = new Date();
-            userModel.Email = req.email;
-            userModel.FirstName = req.name.givenName;
-            userModel.LastName = req.name.familyName;
-            //userModel.Password = req.body.password;
-            userModel.SessionId = req.token;
-            userModel.Id = req.sid;
-            userModel.UserName = req.email;
-            return userModel;
+                });
+            }
+            private GetUserModel(req) {
+                const userModel = UserModule.userModel;
+                userModel.Active = true;
+                userModel.CreatedAt = new Date();
+                userModel.UpdatedAt = new Date();
+                userModel.Email = req.email;
+                userModel.FirstName = req.name.givenName;
+                userModel.LastName = req.name.familyName;
+                //userModel.Password = req.body.password;
+                userModel.SessionId = req.token;
+                userModel.Id = req.sid;
+                userModel.UserName = req.email;
+                return userModel;
+            }
         }
     }
-}

@@ -31,8 +31,6 @@ export namespace Controllers {
         }
         public Get(route: string): Router {
             return this.ROUTER.get("/", (req: Request, res: Response) => {
-                // tslint:disable-next-line:no-console
-                console.log("app Session:" + util.inspect(req.session));
                 this.CURRENT_VIEW_PATH = this.VIEW_PATH.replace("{1}", "index");
                 res.render(this.CURRENT_VIEW_PATH, {
                     locals: {

@@ -22,4 +22,11 @@ export default class CurrentClient {
     public set ReturnUrl(v: string) {
         this.returnUrl = v;
     }
+    private token: string;
+    public get Token(): string {
+        return this.token;
+    }
+    public set Token(v: string) {
+        this.token = v;
+    }
 }
